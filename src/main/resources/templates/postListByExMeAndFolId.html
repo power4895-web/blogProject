@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="layout/basic">
+	<meta charset="UTF-8">
+	<th:block layout:fragment="title">
+		<title>This page is a list page</title>
+	</th:block>
+	
+	<th:block layout:fragment="content">
+		<div th:text="${userId}" style="display:none; text-align:right;" id="after" class="text-info" ></div>
+	<p class="text-success">팔로잉한 사람을 제외한 전체회원들의 컨텐츠 입니다.</p>		
+    	<hr><br><br>
+		    <ul id="pid" class="post_ul">
+		        <li class="post_li post" id="child" th:if="${not #lists.isEmpty( findAllBContentExcidAndFolId )}"
+		            th:each="list : ${findAllBContentExcidAndFolId}" th:data-id="${list.blogId}">
+			            <span class="post_span user">
+			                <a th:href="@{'/postList/' + ${list.blogId}}" th:text="${list.blogId}" id="test2"></a>
+			            </span>
+			            <input type="hidden" id="loginId" th:value="${userId}"for="inp-type-1">
+			            <span id="test3" class="post_span date" th:text="${list.createDate}"></span>
+			            <button id="folI" th:onclick="insertFollowing([[${list.blogId}]])"class="follow-btn post-span2">╂팔로잉 추가</button>
+			            <p class="post_title">
+			           		 <a th:href="@{'/postDetail/' + ${list.id}}" th:text="${list.title}"id="test5"></a>
+			            <p>
+			            <p class="post_content">
+			           		 <a th:href="@{'/postDetail/' + ${list.id}}" th:text="${list.content}"id="test6"></a>
+			            <p>
+		        </li>
+		    </ul>
+					    <tr th:unless="${not #lists.isEmpty( findAllBContentExcidAndFolId)}">
+					        <td colspan="5">팔로잉한 사람이 없습니다.</td>
+					    </tr>
+		<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+		<script>
+		 $(document).ready(function(){
+	  	  });
+
+        function insertFollowing(followerId) {
+			
+            $.ajax({
+                type: "POST",
+                url: "/insertFollowingAjax",
+                data: {
+                    "followerId": followerId,
+                },
+                success: function (data) {                	
+                	console.log('followerId', followerId);
+                    $('li[data-id='+followerId+'] .follow-btn').each(function(idx, it) { $(it).toggle() });                                                                                      
+                }
+            });
+
+        }
+
+
+        function deleteFollowing(followerId) {
+            console.log('followerId', followerId);
+            $.ajax({
+                type: "DELETE",
+                url: "/deleteFollowingAjax",
+                data: {
+                    "followerId": followerId,
+                },
+                success: function (data) {
+
+                }
+            });
+
+        }
+		        
+// 		 var webSocket = new WebSocket("ws://" + location.host + "/alram");				 
+// 		 webSocket.onmessage = function(message) {
+// 			 console.log(JSON.parse(message.data))
+			 
+// 			 var rcvData = JSON.parse(message.data);
+// 			 console.log('rcvData', rcvData);
+// 			 console.log('sending', rcvData.sendingId);
+// 			 console.log('geting', rcvData.getingId);
+// 			 console.log('count', rcvData.count);
+// 			 console.log('loginId',$('#loginId').val());
+// 			 if( rcvData.getingId == $('#loginId').val()){
+// 				$("#after").text(rcvData.sendingId + "님이 팔로잉하기 시작했습니다."); // display 속성을 block 으로 바꾼다.
+// 				$("#after").show(); // display 속성을 block 으로 바꾼다.
+// 			 }
+// 		 };
+
+    </script>
+		
+	</th:block>
+</html>

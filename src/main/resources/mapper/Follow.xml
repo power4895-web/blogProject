@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.co.trgtech.trg02.repository.FollowMapper">
+	
+	<!-- 팔로잉 카운트 -->
+	<select id="followingCount" resultType="int">
+		/** followingCount **/
+		SELECT
+				count(*)
+		FROM
+				tb_follow
+	  	WHERE	following_id = #{followingId}
+	</select>
+	
+	<!-- 팔로워 카운트 -->
+	<select id="followerCount" resultType="int">
+	/** followerCount **/
+		SELECT
+				count(*)
+		FROM
+				tb_follow
+		WHERE	follower_id = #{followerId}	
+	</select>
+	
+	<!-- 내가 팔로잉한 사람 리스트-->
+	<select id="FindAllByFollowing" resultType="FollowDto">
+		/** findAllBlog **/
+		SELECT
+				id
+				following_id
+				, follower_id
+		FROM
+				tb_follow
+		WHERE	following_id = #{followingId}		
+	</select>
+		
+	
+	<!-- 나를 팔로우 한 사람 리스트-->
+	<select id="FindAllByFollower" resultType="FollowDto">
+		/** findAllBlog **/
+		SELECT
+				id
+				, following_id
+				, follower_id
+		FROM
+				tb_follow
+		WHERE	follower_id = #{followerId}	
+	</select>
+	
+
+	
+	<!-- 팔로잉 신청 -->
+	<insert id="insertFollowing">
+		/** insertFollowing **/
+		INSERT INTO tb_follow(
+				following_Id
+				, follower_Id
+				, create_date
+		)VALUES(
+				#{followingId}
+				, #{followerId}
+				, now()
+		)
+	</insert>
+	
+	
+<!-- 	내가 팔로잉을 해제 -->
+	<delete id="deleteFollowing">
+	/** deleteFollowing **/
+		DELETE 
+		FROM 
+				tb_follow 
+		where 
+				following_id = #{followingId}
+		AND 	follower_id = #{followerId};
+	</delete>
+	
+	<!-- 	내가 나의 팔로워를 해제 -->
+	<delete id="deleteFollowerByMe">
+	/** deleteFollowing **/
+		DELETE 
+		FROM 
+				tb_follow 
+		where 
+				following_id = #{followingId}
+		AND 	follower_id = #{followerId};
+	</delete>
+	
+	
+<!-- 	내가 이 사람을 팔로워 했는지 안했는지 detail에서 사용 하기 위함-->
+	<select id="getPostDetailFollowerIdByLoginId" resultType="FollowDto">
+	/** getPostDetailFollowerIdByLoginId **/
+		SELECT
+				follower_id
+		FROM
+				tb_follow
+		WHERE	following_id = #{followingId}	
+		AND 	follower_id = #{followerId}
+	</select>
+	
+	
+	<select id="FindContentByFollowingId" resultType="FollowDto">
+	<!-- 내가 팔로잉한 사람 내용-->
+	/** FindContentByFollowingId **/
+		SELECT
+				follower_id
+				,following_id
+	               ,p.title
+	               ,p.content
+	               ,p.create_date
+	               ,p.id
+		FROM
+				tb_post p
+	    RIGHT OUTER JOIN 
+					tb_follow f 
+		ON 		f.follower_id = p.blog_id 
+		WHERE   f.following_id = #{followingId}	
+		order by p.create_date desc
+		limit 0, 10	
+	</select>
+
+
+
+	
+	
+<!-- 	내가 팔로잉한 사람의 포스트 다음 글을 가져오는 걸로 바꾸기 -->
+	<select id="infiniteScrollDown" resultType="followDto" >
+	/** infiniteScrollDown **/
+		<![CDATA[
+		SELECT
+				follower_id
+				,following_id
+	               ,p.title
+	               ,p.content
+	               ,p.create_date
+	               ,p.id
+		FROM
+				tb_post p
+	    RIGHT OUTER JOIN 
+					tb_follow f 
+		ON 		f.follower_id = p.blog_id 
+		WHERE   f.following_id = #{followingId}
+		AND p.id < #{id}
+		order by p.create_date desc
+		limit 0, 10	
+		]]>
+	</select>
+
+	
+</mapper>

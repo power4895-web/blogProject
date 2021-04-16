@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="layout/basic">
+<meta charset="UTF-8">
+<th:block layout:fragment="title">
+    <title>This page is a list page</title>
+</th:block>
+
+<th:block layout:fragment="content">
+    <span class="btn_wrap text-center">
+        <h2>
+            <td th:if="${postingId == null}" th:text="${blogInfo.blogName}"></td>
+            <td th:if="${blogInfo.userId == postingId}" th:text="${blogInfo.blogName}"></td>
+        </h2>
+    </span>
+	    <div sec:authorize="isAuthenticated()" class="btn_wrap text-right">
+	        <a class="btn btn-bordered waves-effect waves-light">게시물 
+	       		<td th:text="${postCount}"></td>
+	        </a>
+	        <a th:href="@{'/followingList/' + ${postingId}}" class="btn btn-twitter waves-effect waves-light">팔로잉
+	        	<td th:text="${followingCount}"></td>
+	        </a>
+	        <a th:href="@{'/followerList/' + ${postingId}}" class="btn btn-twitter waves-effect waves-light">팔로워
+	        	<td th:text="${followerCount}"></td>   
+	        </a>
+	    </div>
+		    <div class="btn_wrap text-left">
+		        <h3>
+		            <!-- 	로그인한 아이디와 블로그 아이디가 동일 했을 땐 프로필 편집, 포스팅하기  , 다를 땐 노출x -->
+		            <td th:if="${postingId == null}" th:text="${blogInfo.userId}"></td>
+		            <td th:if="${blogInfo.userId == postingId}" th:text="${blogInfo.userId}"></td>	
+		            <td th:if="${postingId == principal}">
+		                <a th:href="@{/postForm}" class="btn btn-bordered waves-effect waves-light">프로필 편집</a>
+		            </td>		
+		            <td th:if="${postingId == null}">
+		                <a th:href="@{/postForm}" class="btn btn-bordered waves-effect waves-light">프로필 편집</a>
+		            </td>		
+		            <td th:if="${postingId == principal}">
+		                <a th:href="@{/postForm}" class="btn btn-success waves-effect waves-light">포스팅하기</a>
+		            </td>		
+		            <td th:if="${postingId == null}">
+		                <a th:href="@{/postForm}" class="btn btn-success waves-effect waves-light">포스팅하기</a>
+		            </td>		
+		            <!-- 	다른사람 블로그 갔을 때 팔로잉한 사람인지 아닌지 -->
+		            <td th:if="${followerId == null && principal != blogInfo.userId}">
+		                <a th:href="@{'/insertfollowing/' + ${blogInfo.userId}}"
+		                    class="btn btn-twitter waves-effect waves-light">팔로잉 하기</a>
+		            </td>		
+		            <td th:if="${followerId != null && blogInfo.userId != followerId.followerId}">
+		                <a th:href="@{'/insertfollowing/' + ${blogInfo.userId}}"
+		                    class="btn btn-twitter waves-effect waves-light">팔로잉 하기</a>
+		            </td>	
+		            <td th:if="${followerId != null && blogInfo.userId == followerId.followerId}">
+		                <a th:href="@{'/deleteFollowing/' + ${blogInfo.userId}}"
+		                    class="btn btn-twitter waves-effect waves-light">팔로잉 해제</a>
+		            </td>
+		            <br><br><br><hr>	
+		        </h3>
+		    </div>
+		   
+		    <br><br>
+
+			    <div th:if="${not #lists.isEmpty( postList )}" th:each="list : ${postList}">
+			        <div class="col-sm-12">
+			            <a th:href="@{'/postList/' + ${list.blogId}}"><label th:text="${list.blogId}" for="inp-type-1"
+			                    class="col-sm-2 control-label"></label></a>
+			            <label th:text="${list.createDate}" for="inp-type-1" class="col-sm-2 control-label"></label>
+			        </div>
+			        <a th:href="@{'/postDetail/' + ${list.id}}">
+			            <div class="page-title" th:text="${list.title}"></div>
+			        </a>
+			        <div class="orm-control2">
+			            <a th:href="@{'/postDetail/' + ${list.id}}">
+			                <div th:text="${list.content}" style=" -webkit-line-clamp: 3; line-height: 1.2em;
+							height: 3.6em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"></div>
+			            </a>
+			        </div>
+			        <br><hr><br>
+			    </div>
+			    <tr th:unless="${not #lists.isEmpty( postList )}">
+			        <td colspan="5">조회된 결과가 없습니다.</td>
+			    </tr>
+<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+</th:block>
+</html>

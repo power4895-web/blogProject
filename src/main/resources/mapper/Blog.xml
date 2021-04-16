@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.co.trgtech.trg02.repository.BlogMapper">
+	<select id="findAllBlog" resultType="BlogDto">
+		/** findAllBlog **/
+		SELECT
+				*
+		FROM
+				tb_blog
+	</select>
+	
+	<select id="findBlogNameByLoginId" resultType="BlogDto">
+		/** findBlogNameByLoginId **/
+		SELECT
+				user_id
+				, blog_name
+		FROM
+				tb_blog
+		WHERE user_id = #{userId}
+	</select>
+	
+	
+	
+	<select id="findAllBlogExcUserId" resultType="BlogDto">
+		/** findAllBlogExcUserId **/
+		SELECT
+				*
+		FROM
+				tb_blog
+		WHERE NOT user_id = #{userId}
+	</select>
+	
+	
+<!-- 	나를 제외한 블로그 컨텐츠 -->
+	<select id="findAllBlogContentExcUserId" resultType="BlogDto">
+		/** findAllBlogContentExcUserId **/
+		SELECT
+				b.user_id
+                , p.id
+                , p.title
+                , p.create_date
+				, p.content
+		FROM
+				tb_blog b
+		RIGHT OUTER JOIN 
+				tb_post p
+		ON		b.user_id = p.blog_id
+		WHERE NOT user_id = #{userId}
+		order by create_date desc
+	</select>
+	
+	<!-- 	나와 내가 팔로잉한 사람을 제외한 블로그 컨텐츠 -->
+	<select id="findAllBlogContentExcUserIdAndFollowingId" >
+		/** findAllBlogContentExcUserIdAndFollowingId **/
+		SELECT
+				b.user_id
+                , p.id
+                , p.title
+                , p.create_date
+				, p.content
+				,f.follower_id
+		FROM
+				tb_blog b
+		RIGHT OUTER JOIN 
+				tb_post p
+		ON		b.user_id = p.blog_id
+		RIGHT OUTER JOIN 
+				tb_follow f
+		ON		b.user_id = f.following_id
+		WHERE NOT b.user_id = #{userId}
+		AND NOT f.following_id = #{followingId}
+		AND NOT f.follower_id = #{followerId}
+		order by create_date desc
+	</select>
+	
+	
+	
+	
+	<insert id="insertBlog">
+		/** insertBlog **/
+		INSERT INTO tb_blog(
+			blog_name
+			, user_id
+			, create_date
+		)VALUES(
+			#{blogName}
+			, #{userId}
+			, NOW()
+		)
+	</insert>
+</mapper>

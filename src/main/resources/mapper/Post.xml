@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.co.trgtech.trg02.repository.PostMapper">
+	<!-- 	포스팅 카운트 -->
+	<select id="postCount" resultType="int">
+		/** PostCount **/
+		SELECT
+				count(*)
+		FROM
+				tb_post
+		WHERE blog_id = #{blogId}
+	</select>
+	
+	<!-- 	모든 포스트 -->
+	<select id="findAllPost" parameterType="PostDto"
+		resultType="PostDto">
+		/** findAllPost **/
+		SELECT
+				*
+		FROM
+				tb_post
+		WHERE blog_id = #{blogId}
+		order by create_date desc
+	</select>
+
+	<!-- 포스트 디테일 -->
+	<select id="findByPostId" resultType="PostDto">
+		/** findByPostId **/
+		SELECT
+				*
+		FROM
+				tb_post
+		WHERE id = #{id}
+	</select>
+
+	<!-- 포스트 등록 -->
+	<insert id="insertPost">
+		/** insertPost **/
+		INSERT INTO tb_post(
+				blog_id
+				, title
+				, content
+				, create_date
+		)VALUES(
+				#{blogId}
+				, #{title}
+				, #{content}
+				, now()
+		)
+	</insert>
+	
+	<!-- 포스트 수정 -->
+	<update id="updatePost">
+		/** updatePost **/
+		UPDATE tb_post SET
+				title = #{title}
+				, content = #{content}
+				, modify_date = now()
+		WHERE id = #{id}
+	</update>
+<!-- 	포스트 삭제 -->
+	<delete id="deletePost">
+		/** deletePost **/
+		DELETE FROM tb_post WHERE id = #{id}
+	</delete>
+<!-- 	내가 팔로잉한 사람과 나를 제외한 사람들의 전체 컨텐츠 -->
+	<select id="findAllBContentExcidAndFolId" resultType="postDto" >
+		/** findAllBContentExcidAndFolId **/
+		SELECT 
+				*
+		FROM
+		(
+				SELECT follower_id 
+				FROM tb_follow fol
+				WHERE fol.following_id = #{followingId}
+		)t1 RIGHT JOIN tb_post tp ON tp.blog_id = t1.follower_id 
+		WHERE 
+				t1.follower_id IS NULL
+				AND tp.blog_id != #{blogId};
+	</select>
+	
+<!-- 	무한스크롤 에이작스 test인데 지워야 하는 것 -->
+	<select id="infiniteScrollDown" resultType="postDto" >
+	/** infiniteScrollDown **/
+		<![CDATA[
+		SELECT 
+				* 
+		FROM 
+				tb_post
+		WHERE id < #{id}
+		AND id > #{id}-20
+	    order by id desc
+	    limit 0, 10	
+		]]>
+	</select>
+	
+</mapper>

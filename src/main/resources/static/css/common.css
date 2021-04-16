@@ -1,0 +1,45 @@
+@charset "EUC-KR";
+li{
+	list-style: none;
+}
+.post_li{
+  border-bottom: 1px solid lightgray;
+  margin: 30px 0;
+}
+.post-span{
+  display: inline-block;
+  margin-left: 10px; 
+  color: #00AEFF;
+  background-color: #ffffff;
+  border: none;
+}
+.post-span.abc{
+  display: inline-block;
+  margin-left: 10px; 
+  color: #00AEFF;
+  background-color: #ffffff;
+  border: none;
+}
+.post-span2{
+  display: inline-block;
+  margin-left: 10px; 
+  color: #00AEFF;
+  background-color: #ffffff;
+  border: 0;
+}
+.post_span.user{
+  font-size: 16px;
+  padding: 20px 0;
+}
+.post_span.date{
+  font-size: 12px;
+  color: lightgray;
+}
+.post_title{
+  font-size: 22px;
+  font-weight: bold;
+  padding: 10px 0;
+}
+.post_content{
+  padding: 20px 0;
+}

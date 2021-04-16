@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"  >
+<meta charset="UTF-8">
+		
+		<div class="ttl" id="test2" th:if="${not #lists.isEmpty( FindContentByFollowingId )}" th:each="following : ${FindContentByFollowingId}">				
+			<div class="col-sm-10">
+			<input type="hidden" id= "hi" th:value="${following.id}"  class="scrolling"></label>
+		<a th:href="@{'/postList/' + ${following.followerId}}" ><label th:text="${following.followerId}" for="inp-type-1" class="col-sm-1 control-label"></label></a>		
+			<label th:text="${following.createDate}" for="inp-type-1" class="col-sm-2 control-label"></label>
+		<a class= "text-info" th:href="@{'/deleteFollowing/' + ${following.followerId}}" >─팔로잉 해제</a>		
+			</div><br><br>		
+			
+			<a th:href="@{'/postDetail/' + ${following.id}}" ><h3><div  th:text="${following.title}"></div></a></h3><br>
+				<div class="orm-control2">
+					<a th:href="@{'/postDetail/' + ${following.id}}" ><div th:text="${following.content}" style=" -webkit-line-clamp: 3; line-height: 1.2em;
+						height: 3.6em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" ></div></a>
+				</div><br><hr><br>
+		</div>
+		<input type="text" id="result" th:value="${result}"  class="scrolling"/>
+		<div class="ttl2"  th:unless="${not #lists.isEmpty( FindContentByFollowingId )}" th:each="following : ${FindContentByFollowingId}">				
+		</div>
+</html>
+<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script th:inline="javascript" >
+$(document).ready(function(){
+	console.log('result: ', result);
+	console.log('resultval', $("#result").val());
+	console.log('FindContentByFollowingId', $("#FindContentByFollowingId"));
+	if($("#result").val() == true){
+	alert("여긴어디");
+		
+	}
+	
+});
+</script>
+

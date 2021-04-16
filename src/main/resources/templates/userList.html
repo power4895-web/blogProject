@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" th:href="@{/css/board.css}">
+</head>
+<body>
+<!--     HEADER -->
+<!--     <div th:insert="common/header.html" id="header"></div> -->
+
+
+    <table>
+        <thead>
+        <tr>
+            <th class="one wide">번호</th>
+            <th class="one wide">사용자아이디</th>
+            <th class="ten wide">글제목</th>
+            <th class="two wide">생성일</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        블로그 사용자 리스트 입니다.
+        <tr th:each="user : ${userList}">
+            <td>
+                <span th:text="${user.id}"></span>
+            </td>
+            <td>
+                <a th:href="@{'/user/' + ${user.id}}">
+                    <span th:text="${user.loginId}"></span>
+                </a>
+            </td>
+            <td>
+                <span th:text="${user.createDate}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+<a th:href="@{/postList}">내 블로그 가기</a>
+<!--     FOOTER -->
+<!--     <div th:insert="common/footer.html" id="footer"></div> -->
+</body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.co.trgtech.trg02.repository.AlramHistoryMapper">
+
+	<select id="alramHistoryCount" resultType="String">
+		/** followingCount **/
+		SELECT
+				count(*)
+		FROM
+				tb_alram_history
+	  	WHERE	geting_id = #{getingId}
+	</select>	
+	<select id="findAllAlramById" resultType="AlramHistoryDto">
+		/** findAllAlramById **/
+		SELECT
+				*
+		FROM
+				tb_alram_history
+	  	WHERE	geting_id = #{getingId}
+	</select>
+		<!-- 팔로잉 히스토리 -->
+	<insert id="insertFollowingHistory">
+		/** insertFollowingHistory **/
+		INSERT INTO tb_alram_history(
+				sending_id
+				, geting_id
+				, content
+				, create_date
+		)VALUES(
+				#{sendingId}
+				, #{getingId}
+				, #{content}
+				, now()
+		)
+	</insert>
+	
+	<delete id="deleteFollowingHistory">
+		/** deleteFollowingHistory **/ 
+		DELETE 
+		FROM 
+				tb_alram_history 
+		WHERE 
+				geting_id = #{getingId}
+		AND		sending_id = #{sendingId} 
+	</delete>
+	
+	
+</mapper>

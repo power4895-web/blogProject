@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	<head>
+    <meta charset="UTF-8">
+    <title>메인</title>
+</head>
+	<body th:fragment="main-body">
+		<div class="fixed-navbar">
+			<div class="pull-left">
+				<h1 class="page-title">
+					<a th:href="@{'/followingContentList/'}" class="btn btn-primary waves-effect waves-light">TRG BLOG</a>
+				</h1>				
+			</div>			
+				<div sec:authorize="isAnonymous()" class="btn_wrap text-right">	
+					<h1 class="page-title">
+						<a th:href="@{/loginPage}" class="btn btn-primary waves-effect waves-light">로그인</a>
+					</h1>
+					<h1 class="page-title">
+						<a th:href="@{/signupForm}" class="btn btn-primary waves-effect waves-light">회원가입</a>
+					</h1>
+				</div>						
+					<div sec:authorize="isAuthenticated()" class="btn_wrap text-right">	
+						<h1 class="page-title">
+							<a th:href="@{/postListByExMeAndFolId}" class="btn btn-primary waves-effect waves-light">ALLCONTENT</a>
+						</h1>
+						<h1 class="page-title">
+							<a th:href="@{/postList}" class="btn btn-primary waves-effect waves-light">MyBlog</a>	
+						</h1>
+						<h1 class="page-title">
+							<a th:href="@{/postList}" sec:authentication="name" class="btn btn-primary waves-effect waves-light" id="logId"></a>
+						</h1>
+						<h1 class="page-title">
+						<a th:href="@{/alramHistoryList}" class="btn btn-primary waves-effect waves-light" id="alram">MyBlog</a>	
+						</h1>
+						<h1 class="page-title">
+							<a th:href="@{/logout}" class="btn btn-primary waves-effect waves-light">LOGOUT</a>
+						</h1>
+						<div th:text="${userId}" style="display:none; text-align:right;" id="after" class="text-info" ></div>
+					</div>		
+		</div>
+		<!-- /.fixed-navbar -->
+
+		<div id="wrapper">
+			<div class="main-content">
+				<div class="row row-inline-block small-spacing">
+					<div class="col-xs-12">
+						<div class="box-content">
+							<div class="clearfix">
+								<h4 class="box-title pull-left"></h4>
+								<!-- /.box-title -->
+	
+								<th:block layout:fragment="search"></th:block>
+	
+							</div>
+							<!-- //.clearfix -->
+	
+							<th:block layout:fragment="content"></th:block>
+	
+							<th:block layout:fragment="paging"></th:block>
+						</div>
+						<!-- /.box-content -->
+						
+						<th:block layout:fragment="add-content"></th:block>
+
+					</div>
+					<!-- /.col-xs-12 -->
+				</div>
+				<!-- /.row row-inline-block small-spacing -->
+				<footer class="footer">
+					<ul class="list-inline">
+						<li>Copyright (c) since 2016 TRGTech. Inc. All rights reserved</li>
+					</ul>
+				</footer>
+			</div>
+			<!-- /.main-content -->
+		</div>
+		<!-- /#wrapper -->
+
+
+		<script>	 
+		$(document).ready(function(){
+            $.ajax({
+                type: "get",
+                url: "/alramCount",
+                data: {
+                    "sendingId": $('#logId').text(),
+                },
+                success: function (data) {
+            		console.log('data', data);
+            		 $("#alram").text("💡" + "(" + data + ")"); // display 속성을 block 으로 바꾼다.
+                }
+            });
+			
+						
+				var webSocket = new WebSocket("ws://" + location.host + "/alram");				 
+			 		console.log('소캣연결') 
+					webSocket.onmessage = function(message) {
+			 			 console.log(JSON.parse(message.data))
+			 			 var rcvData = JSON.parse(message.data);
+			 			 console.log('body rcvData', rcvData);
+			 			 console.log('bodysending', rcvData.sendingId);
+			 			 console.log('bodygeting', rcvData.getingId);
+			 			 console.log('bodycount', rcvData.count);
+			 			 console.log('bodylogId',$('#logId').text());
+			 			 if( rcvData.getingId == $('#logId').text()){
+			 				 
+			 				 $("#alram").text("💡" + "(" + rcvData.count + ")"); // display 속성을 block 으로 바꾼다.
+			  				$("#after").text(rcvData.sendingId + "님이 팔로잉하기 시작했습니다."); // display 속성을 block 으로 바꾼다.
+			  				$("#after").show(); // display 속성을 block 으로 바꾼다.
+			  				setTimeout(function() { $("#after").hide(); }, 3000);
+			 			 }
+			 		 };	
+	 		 
+		});
+
+		</script>
+		<script th:src="@{/scripts/jquery.min.js}"></script>
+		<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+		<script th:src="@{/plugin/bootstrap/js/bootstrap.min.js}"></script>
+		<script th:src="@{/plugin/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js}"></script>
+		<script th:src="@{/scripts/main.js}"></script>
+		<script th:src="@{/scripts/common.js}"></script>
+		<th:block layout:fragment="script"></th:block>
+	</body>
+</html>

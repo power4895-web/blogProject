@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="layout/basic">
+<meta charset="UTF-8">
+<th:block layout:fragment="title">
+    <title>This page is a list page</title>
+</th:block>
+
+<th:block layout:fragment="content">
+    <p class="text-success">팔로잉한 사람들의 컨텐츠 입니다.</p>
+    <hr><br><br>
+    <ul id="pid" class="post_ul">
+        <li class="post_li post" id="child" th:if="${not #lists.isEmpty( FindContentByFollowingId )}"
+            th:each="following : ${FindContentByFollowingId}" th:data-id="${following.followerId}">
+	      		<input type="hidden" id="test1" th:value="${following.id}" for="inp-type-1" class="scrolling">
+	            <input type="hidden" id="loginId" th:value="${userId}"/>
+	            <span class="post_span user">
+	                <a th:href="@{'/postList/' + ${following.followerId}}" th:text="${following.followerId}" id="test2"></a>
+	            </span>
+	            <span id="test3" class="post_span date" th:text="${following.createDate}"></span>
+	            <input type="hidden" th:name="${following.followerId}" th:value="${following.followerId}">
+	            <button id="folD" th:onclick="deleteFollowing([[${following.followerId}]])"
+	           		class="follow-btn post-span" data-followid="${following.followerId}" >─팔로잉삭제</button>
+	            <button id="folI" th:onclick="insertFollowing([[${following.followerId}]])" 
+	            	class="follow-btn post-span2"style="display:none;" data-followid="${following.followerId}" >╂팔로잉 추가</button>
+	            <p class="post_title">
+	           		 <a th:href="@{'/postDetail/' + ${following.id}}" th:text="${following.title}"id="test5"></a>
+	            <p>
+	            <p class="post_content">
+	           		 <a th:href="@{'/postDetail/' + ${following.id}}" th:text="${following.content}"id="test6"></a>
+	            <p>
+        </li>
+    </ul>
+    <tr th:unless="${not #lists.isEmpty( FindContentByFollowingId)}">
+        <td colspan="5">팔로잉한 사람이 없습니다.</td>
+    </tr>
+
+
+
+    <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+    <script th:inline="javascript">
+
+        var lastScrollTop = 0;
+        var easeEffect = 'easeInQuint';
+        totallist = new Array();
+
+        // 1. 스크롤 이벤트 발생
+        $(window).scroll(function () { // ① 스크롤 이벤트 최초 발생
+//         	console.log('scroll 시작')
+            var currentScrollTop = $(window).scrollTop();
+            /*  
+                =================	다운 스크롤인 상태	================
+            */
+            if (currentScrollTop - lastScrollTop > 0) {
+                // down-scroll : 현재 게시글 다음의 글을 불러온다.
+
+                // 2. 현재 스크롤의 top 좌표가  > (게시글을 불러온 화면 height - 윈도우창의 height) 되는 순간
+                if ($(window).scrollTop() >= ($(document).height() - $(window).height())) { //② 현재스크롤의 위치가 화면의 보이는 위치보다 크다면
+
+                    // 3. class가 scrolling인 것의 요소 중 마지막인 요소를 선택한 다음 그것의 data-bno속성 값을 받아온다.
+                    //		즉, 현재 뿌려진 게시글의 마지막 bno값을 읽어오는 것이다.( 이 다음의 게시글들을 가져오기 위해 필요한 데이터이다.)
+                    var lastId = $(".scrolling:last").attr("value");
+                    console.log('lastId', lastId);
+                    // 						var i=0;
+                    // 4. ajax를 이용하여 현재 뿌려진 게시글의 마지막 bno를 서버로 보내어 그 다음 20개의 게시물 데이터를 받아온다. 
+                    $.ajax({
+                        type: 'post',	// 요청 method 방식 
+                        url: '/infiniteScrollDown2',// 요청할 서버의 url
+                        dataType: 'json', // 서버로부터 되돌려받는 데이터의 타입을 명시하는 것이다.
+                        data: { // 서버로 보낼 데이터 명시 
+                            id: lastId
+                        },
+                        success: function (data) {// ajax 가 성공했을시에 수행될 function이다. 이 function의 파라미터는 서버로 부터 return받은 데이터이다.
+                            if (data != 0) {
+//                                 console.log('에이작스에서의 data', data);
+                                totallist = totallist.concat(data); ///totallist에 차곡차곡 누적시켜준다.
+//                                 console.log("에이작스에서의 totallist", totallist);
+                                history.replaceState({ list: totallist }, '', '##');
+                                //history.state에 기록할 데이터,  title, 새로운 히스토리 엔트리의 URL 값입니다
+                                //이부분이 핵심인데 현재 페이지의 주소에 ## 이라는 앵커를 넣어줌으로서 이 페이지에 1회이상 페이지 로딩이 있었다는 표시를 해준다. 
+                                //replaceState라는것은 현재페이지 히스토리를 변경하는 함수이고 
+                                //pushState를 추가를 하는 함수인데 replaceState로 해야 현재 리스트에서 백스페이스시 뒤 페이지로 가기때문이다. 
+                                //중요한부분은 replaceState(데이터,타이틀,URL)에서 데이터부분인데 현재까지 계속 로딩해서 받아온 데이터를 저장시켜준다. 
+                                //그리고 불러온 후 현재페이지도 세팅해야 하므로 현재 페이지도 데이터 부분에 넣어준다.
+
+                                data.forEach((value) => {
+                                	
+                                    console.log('valuefollowerId',value.followerId);
+                                    var cloneElements = $('#child').clone();
+                                    var input = cloneElements[0].children[0];
+                                    input.defaultValue = value.id;
+                                    cloneElements.find("#test2").text(value.followerId);
+                                    cloneElements.find("#test2").attr("href", "/postList/" + value.followerId);
+                                    cloneElements.find("#test3").text(value.createDate);                                    
+//                                  cloneElements.find("#folI").attr({"data-followerid:"value.followerId"});
+                                    cloneElements.find("#folI").attr("onclick", 'insertFollowing("' + value.followerId + '")');
+                                    cloneElements.find("#folD").attr("onclick", 'deleteFollowing("' + value.followerId + '")');
+                                    cloneElements.find("#test5").text(value.title);
+                                    cloneElements.find("#test5").attr("href", "/postDetail/" + value.id);
+                                    cloneElements.find("#test6").text(value.content);
+                                    cloneElements.find("#test6").attr("href", "/postDetail/" + value.id);
+                                    $("#pid").append(cloneElements);
+                                })
+                            } else {
+                                alert("더 이상 불러올 컨텐츠가 없습니다.");
+                            }
+                        }// success
+                    });// ajax
+                    // 여기서 class가 listToChange인 것중 가장 처음인 것을 찾아서 그 위치로 이동하자.
+                    var position = $(".ttl:first").offset();// 위치 값
+                    // 이동  위로 부터 position.top px 위치로 스크롤 하는 것이다. 그걸 500ms 동안 애니메이션이 이루어짐.
+                    // 						$('html,body').stop().animate({scrollTop : position.top }, 600, easeEffect);
+
+                }//if : 현재 스크롤의 top 좌표가  > (게시글을 불러온 화면 height - 윈도우창의 height) 되는 순간
+
+                // lastScrollTop을 현재 currentScrollTop으로 갱신해준다.
+                lastScrollTop = currentScrollTop;
+//         		console.log('location.hash', location.hash)
+//         		console.log('location.hash', location)
+            }// 다운스크롤인 상태
+
+
+
+        });// scroll event
+// 		console.log('location.hash', location.hash)
+// 		console.log('location.hash', location)
+        if (location.hash) {  //현재 주소에 ##이라는앵커가 박혀있을경우 true가 발생한다.  
+            //앵커가 박혔다는것은 새 페이지 진입이아니라 한번이라도 로딩이 있었던 페이지이므로  
+            //뒤로가기로 왔다는 뜻이된다.  
+            var data = history.state; //아까 데이터로 보낸부분이 history.state에 저장이되어있다.    페이지랑 리스트가 온다.
+//             console.log('반응에서 data.list', data.list);
+            if (data) {
+                data.list.forEach((value) => {
+                    var cloneElements = $('#child').clone();
+                    var input = cloneElements[0].children[0];
+//                 	console.log('valuefollowerId',value.followerId);
+                    input.defaultValue = value.id;
+                    cloneElements.find("#test2").text(value.followerId);
+                    cloneElements.find("#test2").attr("href", "/postList/" + value.followerId);
+                    cloneElements.find("#test3").text(value.createDate);
+                    cloneElements.find("#test4").attr("href", "/deleteFollowing/" + value.followerId);
+                    cloneElements.find("#test5").text(value.title);
+                    cloneElements.find("#test5").attr("href", "/postDetail/" + value.id);
+                    cloneElements.find("#test6").text(value.content);
+                    cloneElements.find("#test6").attr("href", "/postDetail/" + value.id);
+                    cloneElements.find("#fold").text(value.followerId);
+                    cloneElements.find("#folI").text(value.followerId);
+                    $("#pid").append(cloneElements);
+                })
+            }
+        }
+
+        function insertFollowing(followerId) {
+        	 console.log('hi' ,$('#loginId').val());
+            $.ajax({
+                type: "POST",
+                url: "/insertFollowingAjax",
+                data: {
+                    "followerId": followerId,
+                },
+                success: function (data) {
+                	console.log('data call back followerId', followerId);
+                    $('li[data-id='+followerId+'] .follow-btn').each(function(idx, it) { 
+                    	console.log('>>it' , it)
+                    	$(it).toggle() 
+                    });
+                    
+	   				 var webSocket = new WebSocket("ws://" + location.host + "/alram");
+					 console.log('userid' ,$('#test1').val());
+	   				 //접속 이벤트
+					 webSocket.onopen = function(message) {
+						 
+						var data = {
+							sendingId : $('#loginId').val(),   //팔로잉 아이디(로그인아이디)
+							getingId : followerId,   //팔로우 아이디
+						}					
+						webSocket.send(JSON.stringify(data));						
+					 };
+					 
+					 webSocket.onmessage = function(message) {
+						 console.log(JSON.parse(message.data))
+						 
+						 var rcvData = JSON.parse(message.data);
+						 console.log('메세지로 보낸 팔로아이디 rcvData', rcvData.userId);
+						 console.log('로그인아이디',$('#loginId').val());
+						 if( rcvData.userId == $('#loginId').val()){
+							alert('정답');
+						 }
+					 };
+    
+                }
+            })
+        }
+
+
+        function deleteFollowing(followerId) {
+            console.log('followerId', followerId);
+            $.ajax({
+                type: "DELETE",
+                url: "/deleteFollowingAjax",
+                data: {
+                    "followerId": followerId,
+                },
+                success: function (data) {
+                	$('li[data-id='+followerId+'] .follow-btn').each(function(idx, it) 
+                	{ $(it).toggle() });
+                	
+                	
+                	
+	   				 var webSocket = new WebSocket("ws://" + location.host + "/alram");
+					 console.log('userid' ,$('#test1').val());
+	   				 //접속 이벤트
+					 webSocket.onopen = function(message) {
+						 
+						var data = {
+							sendingId : $('#loginId').val(),   //팔로잉 아이디(로그인아이디)
+							getingId : followerId,   //팔로우 아이디
+						}					
+						webSocket.send(JSON.stringify(data));						
+					 };
+					 
+					 webSocket.onmessage = function(message) {
+						 console.log(JSON.parse(message.data))
+						 
+						 var rcvData = JSON.parse(message.data);
+						 if( rcvData.userId == $('#loginId').val()){
+							alert('정답');
+						 }
+					 };
+                	
+                	
+                	
+                }
+            });
+        }		
+    </script>
+
+</th:block>
+
+</html>

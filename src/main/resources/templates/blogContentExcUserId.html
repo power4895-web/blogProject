@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/basic">
+	<meta charset="UTF-8">
+	<th:block layout:fragment="title">
+		<title>This page is a list page</title>
+	</th:block>
+	
+	<th:block layout:fragment="content">
+	전체사용자 내용
+<!-- `<input type="text" readonly name="blogId" class="form-control" th:value="${followingId}" id="gd" /> -->
+		<br><br>
+		<div th:if="${not #lists.isEmpty( blogContentListByExcLoginId )}" th:each="list : ${blogContentListByExcLoginId}">
+			<div class="col-sm-12">
+				<a th:href="@{'/postList/' + ${list.userId}}" ><label th:text="${list.userId}" for="inp-type-1" class="col-sm-2 control-label"></label></a>	
+				
+				
+				
+<!-- 		<td th:if="${FindContentByFollowingId == null && principal != blogInfo.userId}"> -->
+<!-- 		<a  th:href="@{'/insertfollowing/' + ${blogInfo.userId}}"  class="btn btn-twitter waves-effect waves-light">팔로잉 하기</a>	 -->
+<!-- 		</td> -->
+				
+<!-- 		<td th:if="${FindContentByFollowingId != null && blogInfo.userId != followerId.followerId}"> -->
+<!-- 		<a  th:href="@{'/insertfollowing/' + ${blogInfo.userId}}"  class="btn btn-twitter waves-effect waves-light">팔로잉 하기</a>	 -->
+<!-- 		</td> -->
+	
+<!-- 		<td th:if="${FindContentByFollowingId != null && blogInfo.userId == followerId.followerId}"> -->
+<!-- 		<a  th:href="@{'/deleteFollowing/' + ${following.followerId}}"  class="btn btn-twitter waves-effect waves-light">팔로잉 해제</a>	 -->
+<!-- 		</td> -->
+				
+				
+				
+				
+				
+				<label th:text="${list.createDate}" for="inp-type-1" class="col-sm-2 control-label"></label>
+			</div>	
+				<br><br>
+			
+				<a th:href="@{'/postDetail/' + ${list.id}}" ><h3><div  th:text="${list.title}"></div></a></h3>
+					<br>
+						<div class="orm-control2">
+							<a th:href="@{'/postDetail/' + ${list.id}}" ><div th:text="${list.content}" style=" -webkit-line-clamp: 3; line-height: 1.2em;
+								height: 3.6em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" ></div></a>
+						</div>
+							<br>
+							<hr>
+							<br>
+		</div>
+					<tr th:unless="${not #lists.isEmpty( blogContentListByExcLoginId )}">
+						<td colspan="5">데이터가 없습니다.</td>
+					</tr>				
+		<!-- /.card-content -->
+		
+		
+		
+				<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+		</script>
+
+			<script th:inline="javascript">
+
+			$(document).ready(function(){	
+// 				console.log('$("#follwerId").val()', $("#gd").val());
+
+			});
+		
+			</script>
+		
+	</th:block>
+</html>

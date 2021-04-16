@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/basic">
+	<meta charset="UTF-8">
+
+	
+	<th:block layout:fragment="title">
+		<title>This page is a list page</title>
+	</th:block>
+	<th:block layout:fragment="content">
+		<div class="table-responsive clearfix">
+			
+			<div sec:authorize="isAuthenticated()" class="btn_wrap text-center">
+			<a th:href="@{'/followingList/' + ${postingId}}" class="btn btn-twitter waves-effect waves-light">팔로잉</a>	
+			<a th:href="@{'/followerList/' + ${postingId}}" class="btn btn-outline-primary">팔로워</a>	
+			</div>
+
+			<table class="table table-hover" >
+				<thead>
+						<th>내가 팔로잉한 사람</th>
+				</thead>
+				<tbody>
+					<tr th:if="${not #lists.isEmpty(followingList )}" th:each="following : ${followingList}">
+						<td th:text="${following.followerId}"></td>
+						
+<!-- 						<td th:text="${blog.createDate}"> -->
+						</td>
+						<td>
+			<a th:href="@{'/deleteFollowing/' + ${following.followerId}}" class="btn btn-outline-primary">팔로잉 해제</a>	
+						</td>
+						
+					</tr>
+					<tr th:unless="${not #lists.isEmpty( followingList)}">
+						<td colspan="5">팔로잉한 사람이 없습니다.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+		</div>
+		
+		<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+		</script>
+			<script th:inline="javascript">
+			$(document).ready(function(){		
+			});
+			</script>
+	</th:block>
+		
+</html>

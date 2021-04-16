@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.co.trgtech.trg02.repository.UserMapper">
+	<insert id="insertUser">
+		/** insertUser **/	
+		INSERT INTO tb_user(
+			 login_id
+			, password
+			, create_date
+		)VALUES(
+			 #{loginId}
+			, #{password}
+			, now()
+			)
+<!-- 	    <selectKey keyProperty="loginId" resultType="String" order="AFTER"> -->
+<!-- 	    	SELECT LAST_INSERT_ID() -->
+<!-- 	  	</selectKey>	 -->
+	</insert>
+	
+	<select id="findAllUser" resultType="UserDto">
+		/** findAllUser **/	
+		SELECT 
+			`id`
+			,`login_id`
+			,`create_date`
+		FROM `tb_user`
+	</select>
+		
+	<select id="findByLoginId" resultType="kr.co.trgtech.trg02.dto.UserDto">
+		/** findByLoginId **/
+		SELECT 
+			*
+		FROM 
+			tb_user
+		WHERE
+			login_id = #{loginId}
+	</select>
+</mapper>

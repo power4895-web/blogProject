@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html
+	lang="ko"
+	xmlns:th="http://www.thymeleaf.org"
+>
+	<head> 
+		<meta charset="UTF-8"> 
+	</head>
+	<div layout:fragment="contents">
+		DFDFDF
+		<script type="text/javascript">
+			
+			
+			//websocket주소 설정
+			var ws = new WebSocket("ws://" + location.host + "/chating/1");
+			console.log("===ws===", ws);
+			
+			//소켓이 열리면 초기화 세팅하기
+			ws.onopen = function(data){
+				alert("환영합니다.");
+			}
+			
+		
+
+    </script>
+	</div>
+	
+</html>
