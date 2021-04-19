@@ -50,6 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //    	.antMatchers("/signupForm").permitAll()
 //    	.antMatchers("/signup").permitAll()
 //    	.antMatchers("/**").authenticated()
+    	.antMatchers( "/imagesFielRead").permitAll()
     	.antMatchers("/loginPage").permitAll()
             .and() // 로그인 설정
             	.formLogin()

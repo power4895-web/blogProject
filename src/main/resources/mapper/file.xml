@@ -24,4 +24,60 @@
 		, NOW()
 	)
 	</insert> 
+	
+	
+	
+	<select id="selectOneImageFile" resultType="kr.co.trgtech.trg02.dto.FileInfo">
+	/** File.selectOneImageFile **/
+	SELECT
+		no
+		, division
+		, ref_key
+		, file_path
+		, sys_filename
+		, org_filename
+		, size
+		, ext
+		, create_dt
+	FROM tb_file
+	WHERE no = #{no} 
+		and	ext In ('png', 'jpeg', 'jpg', 'gif', 'bmp')
+	</select>
+	
+	<select id="selectFile" resultType="kr.co.trgtech.trg02.dto.FileInfo">
+	/** File.selectFile **/
+	SELECT
+		no
+		, division
+		, ref_key
+		, file_path
+		, sys_filename
+		, org_filename
+		, size
+		, ext
+		, create_dt
+	FROM tb_file
+	WHERE no = #{no}
+	</select>
+	
+	
+	<select id="selectFileByLoginId" resultType="kr.co.trgtech.trg02.dto.FileInfo">
+	/** File.selectFileByLoginId **/
+	SELECT
+		no
+		, division
+		, ref_key
+		, file_path
+		, sys_filename
+		, org_filename
+		, size
+		, ext
+		, create_dt
+	FROM tb_file
+	WHERE ref_key = #{refKey}
+	AND division = #{division}
+	</select>
+	
+	
+	
 </mapper>

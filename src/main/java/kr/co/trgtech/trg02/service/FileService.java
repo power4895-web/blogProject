@@ -17,4 +17,26 @@ public class FileService {
 	public FileInfo singleFileUpload(MultipartFile file, String path) throws Exception{
 		return FileManager.upload(file, path);
 	}
+	
+	
+	public FileInfo selectOneImageFile(String no) {
+		return fileMapper.selectOneImageFile(no);
+	}
+	
+	/**
+	 * 파일 조회
+	 * @param id
+	 * @return
+	 */
+	public FileInfo selectFile(String no) { 
+		return fileMapper.selectFile(no);
+	}
+	
+	
+	public FileInfo selectFileByLoginId(FileInfo fileInfo){
+		return fileMapper.selectFileByLoginId(fileInfo);
+	}
+	
+	
+	
 }

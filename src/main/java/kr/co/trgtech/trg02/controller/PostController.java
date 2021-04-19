@@ -1,7 +1,6 @@
 package kr.co.trgtech.trg02.controller;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,18 +12,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
-import groovyjarjarasm.asm.tree.IntInsnNode;
 import kr.co.trgtech.trg02.dto.BlogDto;
+import kr.co.trgtech.trg02.dto.FileInfo;
 import kr.co.trgtech.trg02.dto.FollowDto;
 import kr.co.trgtech.trg02.dto.PostDto;
+import kr.co.trgtech.trg02.dto.UserDto;
 import kr.co.trgtech.trg02.service.BlogService;
+import kr.co.trgtech.trg02.service.FileService;
 import kr.co.trgtech.trg02.service.FollowService;
 import kr.co.trgtech.trg02.service.PostService;
 import kr.co.trgtech.trg02.service.UserService;
@@ -41,6 +37,13 @@ public class PostController {
 
 	@Autowired
 	private BlogService blogService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private FileService fileService;
+	
 
 	// 포스트 목록 (로그인한 사람의 포스팅 리스트)
 	@RequestMapping("/postList")
@@ -75,6 +78,19 @@ public class PostController {
 		logger.debug("followerCount[{}]", followerCount);
 		model.addAttribute("followerCount", followerCount);
 
+		//파일아이디
+		UserDto userInfo = userService.findByLoginId(principal.getName());
+		System.out.println(">>>>>>>>>>id" + userInfo.getId());
+		FileInfo fileInfo = new FileInfo();
+		fileInfo.setRefKey(userInfo.getId());
+		fileInfo.setDivision("user");
+		FileInfo FileInfo = fileService.selectFileByLoginId(fileInfo);
+		System.out.println("FileInfo.getNo()" + FileInfo.getNo());
+		model.addAttribute("FileNo", FileInfo.getNo());
+		
+		
+		
+		
 		logger.debug("blogInfo[{}]", blogInfo);
 		logger.info("postList end");
 		return "postList";

@@ -1,5 +1,14 @@
 package kr.co.trgtech.trg02.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +40,43 @@ public class FileController {
 	public FileInfo fileUpload(@RequestParam("file") MultipartFile file) throws Exception{
 		return fileService.singleFileUpload(file, fileUploadPath);
 	}
+	
+	/**
+	 * 파일다운로드
+	 * @param response
+	 * @param filename
+	 * @throws IOException 
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(value="/imagesFielRead")
+	public void  imagesRead (HttpServletResponse response, @RequestParam("no") String no) throws IOException {
+		ServletOutputStream imgout = response.getOutputStream();
+		FileInfo fileInfo = fileService.selectOneImageFile(no);
+		
+		if (fileInfo != null) {
+			
+			String imageFileName = fileInfo.getFilePath() + fileInfo.getSysFilename();
+			
+			File file = new File(imageFileName);
+			if(file.exists()) {
+				try (FileInputStream input = new FileInputStream(imageFileName)){
+					int length;
+					byte[] buffer = new byte[10];
+					
+					while( (length = input.read(buffer)) != -1 ) {
+						imgout.write(buffer, 0, length);
+					}
+				} catch (FileNotFoundException e) {
+					logger.error("/imagesFielRead is failed to find a file", e);
+					throw e;
+				}
+			}
+		}
+	}
+
+	
+	
+	
 	
 	
 }

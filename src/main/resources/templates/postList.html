@@ -11,6 +11,7 @@
         <h2>
             <td th:if="${postingId == null}" th:text="${blogInfo.blogName}"></td>
             <td th:if="${blogInfo.userId == postingId}" th:text="${blogInfo.blogName}"></td>
+            <img th:src="@{/imagesFielRead?no=}+${FileNo }"/>
         </h2>
     </span>
 	    <div sec:authorize="isAuthenticated()" class="btn_wrap text-right">

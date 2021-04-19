@@ -42,7 +42,7 @@ public class UserService implements UserDetailsService {
 	
 	// 비밀번호 암호화
 	@Transactional
-	public int insertUser(UserDto userDto , BlogDto blogDto, String fileUploadPath) {
+	public void insertUser(UserDto userDto , BlogDto blogDto, String fileUploadPath) {
 		logger.info("insertUser Service begin - userDto[{}]", userDto);
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -78,11 +78,16 @@ public class UserService implements UserDetailsService {
 		
 		
 		logger.info("insertUser Service end");
-		return userMapper.insertUser(userDto);
+//		return userMapper.insertUser(userDto);
 	}
 
 	public List<UserDto> findAllUser(UserDto userDto) {
 		return userMapper.findAllUser(userDto);
+	}
+	
+	
+	public UserDto findByLoginId(String loginId) {
+		return userMapper.findByLoginId(loginId);
 	}
 
 	@Override
