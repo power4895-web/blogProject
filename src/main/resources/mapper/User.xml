@@ -13,9 +13,9 @@
 			, #{password}
 			, now()
 			)
-<!-- 	    <selectKey keyProperty="loginId" resultType="String" order="AFTER"> -->
-<!-- 	    	SELECT LAST_INSERT_ID() -->
-<!-- 	  	</selectKey>	 -->
+	    <selectKey keyProperty="id" resultType="String" order="AFTER">
+	    	SELECT LAST_INSERT_ID()
+	  	</selectKey>	
 	</insert>
 	
 	<select id="findAllUser" resultType="UserDto">

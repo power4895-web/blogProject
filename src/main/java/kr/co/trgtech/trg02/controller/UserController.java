@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,11 @@ public class UserController {
 	@Autowired
 	private BlogService blogService;
 
+	@Value("${file.upload.path}") 
+	private String fileUploadPath;
+	
+	
+	
 	// 메인 페이지
 	@GetMapping("/")
 	public String index(Principal principal) {
@@ -65,14 +71,12 @@ public class UserController {
 
 	// 회원가입 처리
 	@PostMapping("/signup")
-	public String signup(UserDto userDto, BlogDto blogDto, String blogName) {
+	public String signup(UserDto userDto, BlogDto blogDto) {
 		logger.info("signup begin - userDto[{}]", userDto.toString());
-		userService.insertUser(userDto);
+		logger.info("getFile[{}]", userDto.getFile());
+		userService.insertUser(userDto, blogDto, fileUploadPath);
 
-		logger.debug("blogName[{}]", blogName);
-		blogDto.setBlogName(blogName);
-		blogDto.setUserId(userDto.getLoginId());
-		blogService.insertBlog(blogDto);
+
 
 		logger.info("signup end");
 		return "redirect:/loginPage";

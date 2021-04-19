@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.co.trgtech.trg02.repository.FileMapper">
+	<insert id="insertFile" useGeneratedKeys="true" keyProperty="no">
+	/** File.insertFile **/
+	INSERT INTO tb_file(
+		division
+		, ref_key
+		, file_path
+		, sys_filename
+		, org_filename
+		, size
+		, ext
+		, create_dt
+	)VALUES(
+		 #{division}
+		, #{refKey}
+		, #{filePath}
+		, #{sysFilename}
+		, #{orgFilename}
+		, #{size}
+		, #{ext}
+		, NOW()
+	)
+	</insert> 
+</mapper>

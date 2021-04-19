@@ -74,52 +74,52 @@
 			</div>
 			<!-- /.main-content -->
 		</div>
-		<!-- /#wrapper -->
-
-
-		<script>	 
-		$(document).ready(function(){
-            $.ajax({
-                type: "get",
-                url: "/alramCount",
-                data: {
-                    "sendingId": $('#logId').text(),
-                },
-                success: function (data) {
-            		console.log('data', data);
-            		 $("#alram").text("💡" + "(" + data + ")"); // display 속성을 block 으로 바꾼다.
-                }
-            });
-			
-						
+			<!-- /#wrapper -->
+			<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+			<script th:src="@{/scripts/jquery.min.js}"></script>
+			<script th:src="@{/plugin/bootstrap/js/bootstrap.min.js}"></script>
+			<script th:src="@{/plugin/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js}"></script>
+			<script th:src="@{/scripts/main.js}"></script>
+			<script th:src="@{/scripts/common.js}"></script>
+	
+			<script>	 
+			$(document).ready(function(){
+	            
+				if($('#logId').text() != ""){
+					$.ajax({
+		                type: "get",
+		                url: "/alramCount",
+		                data: {
+		                    "sendingId": $('#logId').text(),
+		                },
+		                success: function (data) {
+		            		console.log('data', data);
+		            		 $("#alram").text("💡" + "(" + data + ")"); // display 속성을 block 으로 바꾼다.
+		                }
+		            });
+				}
 				var webSocket = new WebSocket("ws://" + location.host + "/alram");				 
-			 		console.log('소캣연결') 
-					webSocket.onmessage = function(message) {
-			 			 console.log(JSON.parse(message.data))
-			 			 var rcvData = JSON.parse(message.data);
-			 			 console.log('body rcvData', rcvData);
-			 			 console.log('bodysending', rcvData.sendingId);
-			 			 console.log('bodygeting', rcvData.getingId);
-			 			 console.log('bodycount', rcvData.count);
-			 			 console.log('bodylogId',$('#logId').text());
-			 			 if( rcvData.getingId == $('#logId').text()){
-			 				 
-			 				 $("#alram").text("💡" + "(" + rcvData.count + ")"); // display 속성을 block 으로 바꾼다.
-			  				$("#after").text(rcvData.sendingId + "님이 팔로잉하기 시작했습니다."); // display 속성을 block 으로 바꾼다.
-			  				$("#after").show(); // display 속성을 block 으로 바꾼다.
-			  				setTimeout(function() { $("#after").hide(); }, 3000);
-			 			 }
-			 		 };	
-	 		 
-		});
+		 		console.log('소캣연결') 
+				webSocket.onmessage = function(message) {
+		 			 console.log(JSON.parse(message.data))
+		 			 var rcvData = JSON.parse(message.data);
+		 			 console.log('body rcvData', rcvData);
+		 			 console.log('bodysending', rcvData.sendingId);
+		 			 console.log('bodygeting', rcvData.getingId);
+		 			 console.log('bodycount', rcvData.count);
+		 			 console.log('bodylogId',$('#logId').text());
+		 			 if( rcvData.getingId == $('#logId').text()){
+		 				$("#alram").text("💡" + "(" + rcvData.count + ")"); // display 속성을 block 으로 바꾼다.
+		  				$("#after").text(rcvData.sendingId + "님이 팔로잉하기 시작했습니다."); // display 속성을 block 으로 바꾼다.
+		  				$("#after").show(); // display 속성을 block 으로 바꾼다.
+		  				setTimeout(function() { $("#after").hide(); }, 3000);
+		 			 }
+		 		 };	
+		 		 
+			});
+	
+			</script>
 
-		</script>
-		<script th:src="@{/scripts/jquery.min.js}"></script>
-		<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
-		<script th:src="@{/plugin/bootstrap/js/bootstrap.min.js}"></script>
-		<script th:src="@{/plugin/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js}"></script>
-		<script th:src="@{/scripts/main.js}"></script>
-		<script th:src="@{/scripts/common.js}"></script>
 		<th:block layout:fragment="script"></th:block>
 	</body>
 </html>

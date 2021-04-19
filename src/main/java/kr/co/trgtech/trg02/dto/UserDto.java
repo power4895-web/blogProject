@@ -1,6 +1,7 @@
 package kr.co.trgtech.trg02.dto;
 
 import org.apache.ibatis.type.Alias;
+import org.springframework.web.multipart.MultipartFile;
 
 @Alias("userDto")
 public class UserDto {
@@ -10,6 +11,17 @@ public class UserDto {
 	private String password;
 	private String createDate;
 	private String modifyDate;
+	private MultipartFile file;
+	
+	
+	
+	public MultipartFile getFile() {
+		return file;
+	}
+
+	public void setFile(MultipartFile file) {
+		this.file = file;
+	}
 
 	public String getId() {
 		return id;
